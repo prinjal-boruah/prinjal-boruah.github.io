@@ -2,28 +2,50 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>BNA - Text to Speech</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body{
           margin:0;
           padding:0;
+          background-repeat: no-repeat;
+          background-image: linear-gradient(#19779B,#0BAF9E);
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          
         }
-        #container{
-          margin:auto;
-          max-width: 350px;
-          /* border: 1px solid black; */
+
+        form{
+          margin: auto;
+        }
+
+        input{
+          height: 40px;
+          width: 50vw;
+          border:none;
+          box-shadow:10px 10px 10px #403f3f;
+        }
+
+        button {
+          height: 43px;
+          width: 80px;
+          box-shadow:10px 10px 10px #403f3f;
+          background: rgb(255, 142, 2, 1);
+          color: #fff;
+          border: none;
+          margin: 0 0 0 10px;
+        }
+        p{
+          color:#fff;
         }
     </style>
   </head>
   <body>
-    <div id="container">
-        <h1>BNA - Text to Speech !</h1>
         <form action="">
-            <input type="text" name="textInput" id="textInput">
-            <button onclick="readText(document.getElementById('textInput').value)">Read</button>
+            <input align="center" type="text" name="textInput" id="textInput">
+            <button align="center" onclick="readText(document.getElementById('textInput').value)">Read Text</button>
         </form>
-    </div>
-
   <script type="text/javascript">
 
     function readText(input_val){
