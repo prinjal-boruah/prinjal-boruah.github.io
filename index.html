@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        body{
+          margin:0;
+          padding:0;
+        }
+        #container{
+          margin:auto;
+          max-width: 350px;
+          /* border: 1px solid black; */
+        }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+        <h1>BNA - Text to Speech !</h1>
+        <form action="">
+            <input type="text" name="textInput" id="textInput">
+            <button onclick="readText(document.getElementById('textInput').value)">Read</button>
+        </form>
+    </div>
+
+  <script type="text/javascript">
+
+    function readText(input_val){
+      var msg = new SpeechSynthesisUtterance();
+      var voices = window.speechSynthesis.getVoices();
+      msg.voice = voices[10]; // Note: some voices don't support altering params
+      msg.voiceURI = 'native';
+      msg.volume = 1; // 0 to 1
+      msg.rate = 1; // 0.1 to 10
+      msg.pitch = 2; //0 to 2
+      msg.text = input_val;
+      msg.lang = 'en-US';
+
+      msg.onend = function(e) {
+        console.log('Finished in ' + event.elapsedTime + ' seconds.');
+      };
+
+      speechSynthesis.speak(msg);
+    }
+    
+  </script>
+  </body>
+</html>
