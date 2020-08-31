@@ -1,86 +1,342 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>BNA - Text to Speech</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body{
-          margin:0;
-          padding:0;
-          background-repeat: no-repeat;
-          background-image: url(https://i.ibb.co/5LXBcSV/Desktop-5-1.png);
-          background-size: 2000px 100%;
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          align-items: center;
-          
-        }
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Voice Controlled Notes App</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shoelace-css/1.0.0-beta16/shoelace.css">
+        <!-- <link rel="stylesheet" href="styles.css"> -->
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <style>
+            ul {
+    list-style: none;
+    padding: 0;
+}
 
-        #container{
-          margin: auto;
-        }
+p {
+    color: #444;
+}
 
-        input{
-          height: 43px;
-          width: 50vw;
-          border:none;
-          box-shadow:10px 10px 10px #403f3f;
-        }
+button:focus {
+    outline: 0;
+}
 
-        button {
-          height: 36px;
-          width: 80px;
-          box-shadow:10px 10px 10px #403f3f;
-          background: rgb(255, 142, 2, 1);
-          color: #fff;
-          border: none;
-          margin: 0 0 0 -25px;
-        }
-        p{
-          color:#fff;
-          text-align: center;
-          font-family: Snell Roundhand, cursive;
-        }
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 100px 50px;
+    text-align: center;
+}
 
-        @media screen and (max-width:500px) {
-            p{
-              font-size: small;
-            }
-        }
-    </style>
-  </head>
-  <body>
-    <div id="container">
-        <form action="">
-            <input align="center" type="text" name="textInput" id="textInput" placeholder="   Enter text here..">
-            <button align="center" onclick="readText(document.getElementById('textInput').value)" >Read Text</button>
-        </form>
-        <p>BNA - Text to Speech</p>
-    </div>
-    
-  <script type="text/javascript">
+.container h1 {
+    margin-bottom: 20px;
+}
 
-    function readText(input_val){
-      var msg = new SpeechSynthesisUtterance();
-      var voices = window.speechSynthesis.getVoices();
-      msg.voice = voices[10]; // Note: some voices don't support altering params
-      msg.voiceURI = 'native';
-      msg.volume = 1; // 0 to 1
-      msg.rate = 1; // 0.1 to 10
-      msg.pitch = 2; //0 to 2
-      msg.text = input_val;
-      msg.lang = 'en-US';
+.page-description {
+    font-size: 1.1rem;
+    margin: 0 auto;
+}
 
-      msg.onend = function(e) {
-        console.log('Finished in ' + event.elapsedTime + ' seconds.');
-      };
+.tz-link {
+    font-size: 1em;
+    color: #1da7da;
+    text-decoration: none;
+}
 
-      speechSynthesis.speak(msg);
+.no-browser-support {
+    display: none;
+    font-size: 1.2rem;
+    color: #e64427;
+    margin-top: 35px;
+}
+
+.app {
+    margin: 40px auto;
+}
+
+#note-textarea {
+    margin: 20px 0;
+}
+
+#recording-instructions {
+    margin: 15px auto 60px;
+}
+
+#notes {
+    padding-top: 20px;
+}
+
+.note .header {
+    font-size: 0.9em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.note .delete-note,
+.note .listen-note {
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+.note .content {
+    margin-bottom: 40px;
+}
+
+.voice_select {
+    margin-bottom: 20px;
+}
+
+
+@media (max-width: 768px) {
+    .container {
+        padding: 50px 25px;
+        margin: 25vh auto;
     }
-    
-  </script>
-  </body>
+
+    button {
+        margin-bottom: 10px;
+    }
+
+}   
+
+
+
+/* -- Demo ads -- */
+
+@media (max-width: 1200px) {
+    #bsaHolder{ display:none;}
+}
+        </style>
+
+    </head>
+    <body>
+        <div class="container">
+
+            <h3 class="no-browser-support">Sorry, Your Browser Doesn't Support the Web Speech API. Try Opening This Demo In Google Chrome.</h3>
+
+            <div class="app"> 
+                <h3>BNA Voice App</h3>
+                <div class="input-single">
+                    <textarea id="note-textarea" placeholder="Create a new note by typing or using voice recognition." rows="6"></textarea>
+                </div>
+                <select class="voice_select">
+                    <option value="hi-IN" selected="selected">Hindi</option>
+                    <option value="en-US">English</option>                   
+                </select>     
+                <button id="start-record-btn" title="Start Recording">Start Recognition</button>
+                <button id="pause-record-btn" title="Pause Recording">Pause Recognition</button>
+                <button id="save-note-btn" title="Save Note">Save Note</button>   
+                <p id="recording-instructions">Press the <strong>Start Recognition</strong> button and allow access.</p>
+                
+                <h3>My Notes</h3>
+                <ul id="notes">
+                    <li>
+                        <p class="no-notes">You don't have any notes.</p>
+                    </li>
+                </ul>
+
+            </div>
+
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- <script src="script.js"></script> -->
+        <script>
+            $(document).ready(function (){ 
+    try {
+      var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      var recognition = new SpeechRecognition();
+    }
+    catch(e) {
+      console.error(e);
+      $('.no-browser-support').show();
+      $('.app').hide();
+    }
+
+
+    var noteTextarea = $('#note-textarea');
+    var instructions = $('#recording-instructions');
+    var notesList = $('ul#notes');
+
+    var noteContent = '';
+
+    // Get all notes from previous sessions and display them.
+    var notes = getAllNotes();
+    renderNotes(notes);
+
+    recognition.continuous = true;
+
+    recognition.onresult = function(event) {
+      var current = event.resultIndex;
+      // Get a transcript of what was said.
+      var transcript = event.results[current][0].transcript;
+      var mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
+
+      if(!mobileRepeatBug) {
+        noteContent += transcript;
+        noteTextarea.val(noteContent);
+      }
+    };
+
+    recognition.onstart = function() { 
+      instructions.text('Voice recognition activated. Try speaking into the microphone.');
+    }
+
+    recognition.onspeechend = function() {
+      instructions.text('You were quiet for a while so voice recognition turned itself off.');
+    }
+
+    recognition.onerror = function(event) {
+      if(event.error == 'no-speech') {
+        instructions.text('No speech was detected. Try again.');  
+      };
+    }
+
+
+
+    /*-----------------------------
+          App buttons and input 
+    ------------------------------*/
+
+    $('#start-record-btn').on('click', function(e) {
+      if (noteContent.length) {
+        noteContent += ' ';
+      }
+      recognition.start();
+    });
+
+
+    $('#pause-record-btn').on('click', function(e) {
+      recognition.stop();
+      instructions.text('Voice recognition paused.');
+    });
+
+    // Sync the text inside the text area with the noteContent variable.
+    noteTextarea.on('input', function() {
+      noteContent = $(this).val();
+    })
+
+    $('#save-note-btn').on('click', function(e) {
+      recognition.stop();
+
+      if(!noteContent.length) {
+        instructions.text('Could not save empty note. Please add a message to your note.');
+      }
+      else {
+        // Save note to localStorage.
+        // The key is the dateTime with seconds, the value is the content of the note.
+        saveNote(new Date().toLocaleString(), noteContent);
+
+        // Reset variables and update UI.
+        noteContent = '';
+        renderNotes(getAllNotes());
+        noteTextarea.val('');
+        instructions.text('Note saved successfully.');
+      }
+          
+    })
+
+
+    notesList.on('click', function(e) {
+      e.preventDefault();
+      var target = $(e.target);
+
+      // Listen to the selected note.
+      if(target.hasClass('listen-note')) {
+        var content = target.closest('.note').find('.content').text();
+        readOutLoud(content);
+      }
+
+      // Delete note.
+      if(target.hasClass('delete-note')) {
+        var dateTime = target.siblings('.date').text();  
+        deleteNote(dateTime);
+        target.closest('.note').remove();
+      }
+    });
+
+
+
+    /*-----------------------------
+          Speech Synthesis 
+    ------------------------------*/
+    var dropdown_val = "hi-EN"
+
+    $( ".voice_select" ).change(function() {
+      dropdown_val = $(".voice_select").val();
+    });
+
+    function readOutLoud(message) {
+      var speech = new SpeechSynthesisUtterance();
+
+      speech.text = message;
+      speech.volume = 1;
+      speech.rate = 1;
+      speech.pitch = 1;
+      speech.lang = dropdown_val;
+      
+      window.speechSynthesis.speak(speech);
+    }
+
+
+
+    /*-----------------------------
+          Helper Functions 
+    ------------------------------*/
+
+    function renderNotes(notes) {
+      var html = '';
+      if(notes.length) {
+        notes.forEach(function(note) {
+          html+= `<li class="note">
+            <p class="header">
+              <span class="date">${note.date}</span>
+              <a href="#" class="listen-note" title="Listen to Note">Listen to Note</a>
+              <a href="#" class="delete-note" title="Delete">Delete</a>
+            </p>
+            <p class="content">${note.content}</p>
+          </li>`;    
+        });
+      }
+      else {
+        html = '<li><p class="content">You don\'t have any notes yet.</p></li>';
+      }
+      notesList.html(html);
+    }
+
+
+    function saveNote(dateTime, content) {
+      localStorage.setItem('note-' + dateTime, content);
+    }
+
+
+    function getAllNotes() {
+      var notes = [];
+      var key;
+      for (var i = 0; i < localStorage.length; i++) {
+        key = localStorage.key(i);
+
+        if(key.substring(0,5) == 'note-') {
+          notes.push({
+            date: key.replace('note-',''),
+            content: localStorage.getItem(localStorage.key(i))
+          });
+        } 
+      }
+      return notes;
+    }
+
+
+    function deleteNote(dateTime) {
+      localStorage.removeItem('note-' + dateTime); 
+    }
+})
+
+        </script>
+
+    </body>
 </html>
+
+
