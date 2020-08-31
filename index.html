@@ -105,6 +105,25 @@ body {
 
 }   
 
+span {
+    color: white!important;
+}
+
+.listen-note {
+    color: black!important;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 4px 10px;
+}
+
+.listen-note:hover {
+    background-color: #0bad9e;
+    color: white!important;
+}
+
+.delete-note {
+    color: red;
+}
 
 
 /* -- Demo ads -- */
@@ -229,6 +248,7 @@ body {
         instructions.text('Could not save empty note. Please add a message to your note.');
       }
       else {
+        readOutLoud(noteContent);
         // Save note to localStorage.
         // The key is the dateTime with seconds, the value is the content of the note.
         saveNote(new Date().toLocaleString(), noteContent);
