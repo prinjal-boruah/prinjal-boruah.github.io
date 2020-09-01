@@ -242,7 +242,11 @@ span {
     })
 
     $('#save-note-btn').on('click', function(e) {
-      recognition.stop();
+      try
+        {recognition.stop();}
+      catch(e){
+        console.log(e);
+      }
 
       if(!noteContent.length) {
         instructions.text('Could not save empty note. Please add a message to your note.');
